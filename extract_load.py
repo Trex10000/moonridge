@@ -10,7 +10,6 @@ AND a timestamped log file in the logs/ folder (so you can review past
 runs). Run summary (processed/skipped/warned/errored/API calls/elapsed)
 is printed at the end of every run, including interrupted ones.
 """
-
 import json
 import os
 import time
@@ -38,7 +37,7 @@ SLEEP_SECONDS = 60 / RATE_LIMIT_PER_MINUTE
 
 MAX_CALLS_PER_RUN = 100_000
 
-TEST_TICKER_LIMIT = 20
+TEST_TICKER_LIMIT = 1000
 
 FORCE_FULL_LOAD = True
 
