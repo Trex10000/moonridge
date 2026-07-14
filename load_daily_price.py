@@ -38,7 +38,7 @@ stats = RunStats()
 RATE_LIMIT_PER_MINUTE = 75
 SLEEP_SECONDS = 60 / RATE_LIMIT_PER_MINUTE
 
-TEST_TICKER_LIMIT = 5
+TEST_TICKER_LIMIT = None
 
 CHECKPOINT_FILE = "daily_price_checkpoint.txt"
 
