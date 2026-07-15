@@ -4,6 +4,7 @@ Runs continuously, updating news all time.
 
 Sweeps through all active tickers: news every lap (always), overview only
 while the market is open. Use --force to override market-hours check.
+
 """
 
 import json
@@ -142,16 +143,18 @@ def main():
 
             market_open = FORCE_MODE or is_market_open()
             mode = "news + overview" if market_open else "news only"
-            log.info(f"\n--- Lap {lap}: {len(tickers)} ticker(s), mode: {mode} ---")
+            log.info(f"\n--- Lap {lap}: {len(tickers)} ticker(s), starting mode: {mode} ---")
+
+            overview_loaded_this_lap = False
 
             for idx, ticker in enumerate(tickers, start=1):
-                if idx % 100 == 0:
-                    market_open = FORCE_MODE or is_market_open()
+                market_open = FORCE_MODE or is_market_open()
 
                 try:
                     load_news(ticker)
                     if market_open:
                         load_overview(ticker)
+                        overview_loaded_this_lap = True
                     stats.processed += 1
                 except RateLimitHit:
                     raise
@@ -161,14 +164,12 @@ def main():
                     continue
 
                 if idx % 200 == 0:
-                    log.info(f"  ... {idx}/{len(tickers)} tickers processed this lap")
+                    mode = "news + overview" if market_open else "news only"
+                    log.info(f"  ... {idx}/{len(tickers)} tickers processed this lap ({mode})")
 
             log.info(f"  Lap {lap} complete ({len(tickers)} tickers)")
 
-            # Transform at the end of each lap so fact_news and
-            # fact_overview stay fresh all day. 
-            # Overview transform only runs if overview data was loaded
-            # this lap (market hours).
+            
             try:
                 supabase.rpc("transform_news").execute()
                 log.debug("  Transformed -> fact_news")
@@ -176,7 +177,7 @@ def main():
                 log.error(f"  transform_news failed: {e}")
                 stats.errors += 1
 
-            if market_open:
+            if overview_loaded_this_lap:
                 try:
                     supabase.rpc("transform_overview").execute()
                     log.debug("  Transformed -> fact_overview")
