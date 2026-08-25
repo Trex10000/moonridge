@@ -21,13 +21,17 @@ import time
 from datetime import datetime
 
 from dotenv import load_dotenv
-from supabase import create_client
+from supabase import create_client, ClientOptions
 
 from pipeline_logger import setup_logging, RunStats
 
 load_dotenv()
 
-supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+supabase = create_client(
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_KEY"),
+    options=ClientOptions(postgrest_client_timeout=300)
+)
 
 log, log_file = setup_logging("run_transforms")
 stats = RunStats()
