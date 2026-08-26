@@ -11,7 +11,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from dotenv import load_dotenv
@@ -32,7 +32,7 @@ RATE_LIMIT_PER_MINUTE = 75
 SLEEP_SECONDS = 60 / RATE_LIMIT_PER_MINUTE
 
 TEST_TICKER_LIMIT = None
-NEWS_LIMIT = "50"
+NEWS_LIMIT = "10"
 
 FORCE_MODE = "--force" in sys.argv
 
@@ -106,10 +106,12 @@ def load_overview(ticker):
 
 
 def load_news(ticker):
+    time_from = (datetime.now() - timedelta(days=7)).strftime("%Y%m%dT0000")
     response = call_av(
-        {"function": "NEWS_SENTIMENT", "tickers": ticker, "limit": NEWS_LIMIT},
+        {"function": "NEWS_SENTIMENT", "tickers": ticker, "limit": NEWS_LIMIT, "time_from": time_from},
         "NEWS_SENTIMENT", ticker
     )
+
     try:
         data = response.json()
     except ValueError:
