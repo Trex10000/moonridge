@@ -18,7 +18,7 @@ MoonRidge is a research tool for long term investors. Search any US stock, explo
 
 Search by ticker or company name across 6,670+ US stocks. Every stock has a detailed profile page showing company description, sector, industry, exchange, IPO date, and a direct link to the company's website.
 
-\!\[Search Bar\](screenshots/searchbar.png)
+![Search Bar](screenshots/searchbar.png)
 
 ### **Stock Overview**
 
